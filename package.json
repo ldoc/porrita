@@ -1,0 +1,26 @@
+{
+  "name": "porrita",
+  "version": "1.0.0",
+  "description": "La porrita del mundial 2026",
+  "main": "index.js",
+  "scripts": {
+     "teams": "node src/scripts/teams.js",
+    "players": "node src/scripts/players.js",
+    "matches": "node src/scripts/matches.js",
+    "flags": "node src/scripts/flags.js"
+
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ldoc/porrita.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ldoc/porrita/issues"
+  },
+  "homepage": "https://github.com/ldoc/porrita#readme",
+  "dependencies": {
+    "puppeteer": "^25.1.0"
+  }
+}

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copa Mundial 2026 - Central de Estadísticas</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #1a252f;
+            --text-muted: #5a6b7c;
+            --border-color: #e2e8f0;
+            --primary-color: #d32f2f; /* Rojo pasión futbolera */
+            --secondary-color: #f1c40f; /* Oro de la copa */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            /* Opcional: Un sutil degradado de fondo que recuerda a un estadio */
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        }
+
+        .dashboard-container {
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .world-cup-badge {
+            font-size: 48px;
+            margin-bottom: 10px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        h1 {
+            font-size: 32px;
+            margin: 0 0 10px 0;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .menu-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 35px 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-partidos:hover {
+            border-color: var(--primary-color);
+        }
+
+        .card-jugadores:hover {
+            border-color: var(--secondary-color);
+        }
+
+        .icon-wrapper {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 36px;
+        }
+
+        .card-partidos .icon-wrapper {
+            background-color: #fde8e8;
+            color: var(--primary-color);
+        }
+
+        .card-jugadores .icon-wrapper {
+            background-color: #fef9e7;
+            color: var(--secondary-color);
+        }
+
+        .menu-card h2 {
+            font-size: 20px;
+            margin: 0 0 10px 0;
+            font-weight: 600;
+        }
+
+        .menu-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <div class="world-cup-badge">🏆</div>
+        <h1>Copa Mundial 2026</h1>
+        <p class="subtitle">Central Oficial de Datos, Fixture y Selecciones</p>
+        
+        <div class="menu-grid">
+            
+            <a href="partidos.html" class="menu-card card-partidos">
+                <div class="icon-wrapper">⚽</div>
+                <h2>Fixture y Partidos</h2>
+                <p>Sigue el calendario completo del torneo. Todos los cruces de grupos y fases finales ordenados por fecha.</p>
+            </a>
+
+            <a href="jugadores.html" class="menu-card card-jugadores">
+                <div class="icon-wrapper">🌍</div>
+                <h2>Selecciones y Planteles</h2>
+                <p>Explora los países clasificados, busca entre las estrellas del torneo y analiza la base de datos oficial.</p>
+            </a>
+
+        </div>
+    </div>
+
+</body>
+</html>

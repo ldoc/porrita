@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador Oficial - Mundial de Fútbol 2026</title>
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --primary-dark: #004499;
+            --accent-color: #00cc66;
+            --bg-gradient-start: #0f2027;
+            --bg-gradient-end: #203a43;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #777777;
+            --border-color: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .search-box-container {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 20px;
+            padding-left: 50px;
+            font-size: 1.2rem;
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .status-message {
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            padding: 10px 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .status-message.error {
+            border-left-color: #dc3545;
+            background-color: #fdf2f2;
+            color: #b30000;
+        }
+
+        .status-message.success {
+            border-left-color: var(--accent-color);
+            background-color: #f2fdf5;
+            color: #006622;
+        }
+
+        .results-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .player-card {
+            background: #fdfdfd;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .player-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            background: #fbfdff;
+        }
+
+        .player-info h3 {
+            font-size: 1.2rem;
+            color: #111;
+            margin-bottom: 4px;
+        }
+
+        .player-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .badge-selection {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+        }
+
+        .badge-club {
+            background-color: #f5f5f5;
+            color: #424242;
+        }
+
+        .player-id {
+            font-size: 0.8rem;
+            color: #888888;
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .player-position {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            background: #e8f5e9;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .footer {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>🏆 Mundial de Fútbol 2026</h1>
+            <p>Buscador Predictivo de Jugadores</p>
+        </div>
+
+        <div class="search-box-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="search-input" placeholder="Escribe al menos 2 letras del jugador..." disabled>
+        </div>
+
+        <div class="status-message" id="status-message">Conectando con el almacén de datos...</div>
+
+        <div class="results-container" id="results-container">
+            <div class="no-results">Introduce al menos 2 caracteres para comenzar la predicción de jugadores.</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2026 Copa del Mundo de la FIFA - Módulo de Datos Automatizado.
+    </div>
+
+    <script>
+        let currentPlayers = [];
+        let currentTeams = [];
+        const searchInput = document.getElementById('search-input');
+        const resultsContainer = document.getElementById('results-container');
+        const statusMessage = document.getElementById('status-message');
+
+        // Dispara la carga automática tan pronto como el HTML está estructurado
+        window.addEventListener('DOMContentLoaded', cargarJugadoresDesdeFichero);
+        window.addEventListener('DOMContentLoaded', cargarEquiposDesdeFichero);
+        searchInput.addEventListener('input', handleSearch);
+
+        // Realiza la petición Fetch HTTP hacia la ruta relativa
+        async function cargarJugadoresDesdeFichero() {
+            const rutaJson = 'data/jugadores.json';
+            
+            try {
+                const respuesta = await fetch(rutaJson);
+                
+                if (!respuesta.ok) {
+                    throw new Error(`Código de estado HTTP: ${respuesta.status}`);
+                }
+                
+                const datos = await respuesta.json();
+                
+                if (datos && Array.isArray(datos.jugadores)) {
+                    currentPlayers = datos.jugadores;
+                    searchInput.removeAttribute('disabled'); // Desbloquea el input si todo va bien
+                    statusMessage.className = "status-message success";
+                    statusMessage.innerHTML = `✅ Datos cargados correctamente desde <strong>${rutaJson}</strong>. (${currentPlayers.length} jugadores listos).`;
+                    searchInput.focus();
+                } else {
+                    throw new Error("Estructura JSON inválida.");
+                }
+                
+            } catch (error) {
+                console.error("Error al cargar el JSON:", error);
+                statusMessage.className = "status-message error";
+                statusMessage.innerHTML = `❌ <strong>Error de carga:</strong> Verifica que tu servidor web local esté corriendo y que tu archivo exista en: <code>${rutaJson}</code>.`;
+                resultsContainer.innerHTML = `<div class="no-results" style="color: #b30000;">Error crítico: No se pudieron mapear los futbolistas.</div>`;
+            }
+        }
+
+        async function cargarEquiposDesdeFichero() {
+            const rutaJson = 'data/equipos.json';
+            
+            try {
+                const respuesta = await fetch(rutaJson);
+                
+                if (!respuesta.ok) {
+                    throw new Error(`Código de estado HTTP: ${respuesta.status}`);
+                }
+                
+                const datos = await respuesta.json();
+                
+                if (datos && Array.isArray(datos.equipos)) {
+                    currentTeams = datos.equipos;
+                } else {
+                    throw new Error("Estructura JSON inválida.");
+                }
+                
+            } catch (error) {
+                console.error("Error al cargar el JSON de equipos:", error);
+                return [];
+            }
+        }
+
+        function handleSearch() {
+            const query = searchInput.value.trim().toLowerCase();
+
+            if (query.length < 2) {
+                renderInitialMessage(query.length);
+                return;
+            }
+
+            const filteredPlayers = currentPlayers.filter(player => 
+                player.nombre.toLowerCase().includes(query)
+            );
+
+            renderPlayers(filteredPlayers);
+        }
+
+        function renderInitialMessage(length = 0) {
+            if (length === 1) {
+                resultsContainer.innerHTML = `<div class="no-results">Te falta 1 letra más... Introduce al menos 2 caracteres.</div>`;
+            } else {
+                resultsContainer.innerHTML = `<div class="no-results">Introduce al menos 2 caracteres para comenzar la predicción de jugadores.</div>`;
+            }
+        }
+
+        function renderPlayers(players) {
+            resultsContainer.innerHTML = '';
+
+            if (players.length === 0) {
+                resultsContainer.innerHTML = `<div class="no-results">No se encontraron jugadores que coincidan con la búsqueda.</div>`;
+                return;
+            }
+
+            players.forEach(player => {
+                const card = document.createElement('div');
+                card.className = 'player-card';
+
+                let positionName = player.posicion;
+                if(positionName === 'F') positionName = 'DEL';
+                if(positionName === 'M') positionName = 'MED';
+                if(positionName === 'D') positionName = 'DEF';
+                if(positionName === 'GK') positionName = 'POR';
+
+                card.innerHTML = `
+                    <div class="player-info">
+                        <h3>${highlightText(player.nombre, searchInput.value)}</h3>
+                        <div class="player-meta">
+                            <span class="badge badge-selection">📍 ${player.seleccion}</span>
+                            <img src="data/flags/${currentTeams && currentTeams.find(team => team.nombre === player.seleccion)?.id || 'default'}.png" alt="Imagen del pais" class="player-image">
+                            <span class="badge badge-club">⚽ ${player.club}</span>
+                            <span class="player-id">ID: ${player.id}</span>
+                            
+                        </div>
+                    </div>
+                    <div class="player-position" title="Posición: ${player.posicion}">${positionName}</div>
+                `;
+                resultsContainer.appendChild(card);
+            });
+        }
+
+        function highlightText(text, search) {
+            if (!search) return text;
+            const pattern = new RegExp(`(${search})`, 'gi');
+            return text.replace(pattern, `<mark style="background-color: #fff59d; color: #000; padding: 0 2px; border-radius: 2px;">$1</mark>`);
+        }
+    </script>
+</body>
+</html>

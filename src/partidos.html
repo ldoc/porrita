@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario de Partidos</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --text-muted: #7f8c8d;
+            --border-color: #e2e8f0;
+            --accent-color: #3498db;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: var(--text-color);
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .partidos-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .partido-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .partido-fecha {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .partido-vs {
+            display: grid;
+            grid-template-columns: 1fr 40px 1fr;
+            align-items: center;
+            text-align: center;
+        }
+
+        .equipo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .equipo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 4px;
+            background-color: #fcfcfc;
+        }
+
+        .equipo-nombre {
+            font-size: 14px;
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        .vs-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-muted);
+            background: #edf2f7;
+            padding: 4px 8px;
+            border-radius: 6px;
+            justify-self: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Próximos Partidos</h1>
+        <div id="loading" class="loading">Cargando partidos...</div>
+        <div id="partidos-container" class="partidos-lista"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const partidosContainer = document.getElementById("partidos-container");
+            const loadingElement = document.getElementById("loading");
+
+            try {
+                // 1. Cargamos ambos archivos JSON de la carpeta data
+                const [respuestaPartidos, respuestaEquipos] = await Promise.all([
+                    fetch('data/partidos.json'),
+                    fetch('data/equipos.json')
+                ]);
+
+                if (!respuestaPartidos.ok || !respuestaEquipos.ok) {
+                    throw new Error("No se pudieron cargar los archivos JSON de la carpeta 'data'.");
+                }
+
+                const dataPartidos = await respuestaPartidos.json();
+                const dataEquipos = await respuestaEquipos.json();
+
+                // 2. Mapeamos los IDs de los equipos con sus nombres reales
+                const mapaEquipos = {};
+                dataEquipos.equipos.forEach(equipo => {
+                    mapaEquipos[equipo.id] = equipo.nombre;
+                });
+
+                // 3. Ordenamos los partidos cronológicamente por su fecha
+                const partidosOrdenados = dataPartidos.partidos.sort((a, b) => {
+                    return new Date(a.fecha) - new Date(b.fecha);
+                });
+
+                // Ocultar mensaje de carga
+                loadingElement.style.display = "none";
+
+                // 4. Renderizar la lista de partidos
+                partidosOrdenados.forEach(partido => {
+                    const nombreCasa = mapaEquipos[partido.equipoCasa] || `Equipo (${partido.equipoCasa})`;
+                    const nombreFuera = mapaEquipos[partido.equipoFuera] || `Equipo (${partido.equipoFuera})`;
+                    const fechaFormateada = formatearFecha(partido.fecha);
+
+                    // Rutas de las banderas basadas en el ID de cada equipo
+                    const rutaBanderaCasa = `data/flags/${partido.equipoCasa}.png`;
+                    const rutaBanderaFuera = `data/flags/${partido.equipoFuera}.png`;
+
+                    const partidoCard = document.createElement("div");
+                    partidoCard.className = "partido-card";
+                    partidoCard.innerHTML = `
+                        <div class="partido-fecha">${fechaFormateada}</div>
+                        <div class="partido-vs">
+                            <div class="equipo">
+                                <img src="${rutaBanderaCasa}" alt="${nombreCasa}" onerror="this.src='data/flags/default.png'; this.onerror=null;">
+                                <span class="equipo-nombre">${nombreCasa}</span>
+                            </div>
+                            <div class="vs-text">VS</div>
+                            <div class="equipo">
+                                <img src="${rutaBanderaFuera}" alt="${nombreFuera}" onerror="this.src='data/flags/default.png'; this.onerror=null;">
+                                <span class="equipo-nombre">${nombreFuera}</span>
+                            </div>
+                        </div>
+                    `;
+
+                    partidosContainer.appendChild(partidoCard);
+                });
+
+            } catch (error) {
+                console.error(error);
+                loadingElement.innerText = "Error al cargar el calendario de partidos.";
+                loadingElement.style.color = "red";
+            }
+        });
+
+        // Convierte el string ISO en una fecha legible en español
+        function formatearFecha(fechaString) {
+            const fecha = new Date(fechaString);
+            return fecha.toLocaleDateString('es-ES', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+    </script>
+</body>
+</html>
